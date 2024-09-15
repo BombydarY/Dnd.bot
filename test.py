@@ -1,13 +1,18 @@
-def very_important_function():
-    print("hello")
+# def my_decorator(func):
+#     def wrapper():
+#         func()
+#         print("Что-то происходит до вызова функции.")
+#         print("Что-то происходит после вызова функции.")
+#     return wrapper
+#
+#
+# @my_decorator
+# def say_hello():
+#     print("Hello!")
+#
+# say_hello()
+from aiogram import types
+
+from settings import ADMINS
 
 
-function = very_important_function
-
-
-@function
-def very_important_function2_0():
-    print("hello 2.0")
-
-
-very_important_function2_0()

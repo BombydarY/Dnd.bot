@@ -1,12 +1,16 @@
 from create_bot import dp, bot
 from aiogram import types, Dispatcher
 
+from decorators import admin_check, error_check
 from neur import get_answer_gpt
+
 
 USER_HELP_MADE = {}
 
-
+@error_check
+@admin_check
 async def send_welcome(message: types.Message):
+    raise IndexError
     await bot.send_message(message.from_user.id, "Hello\n"
                                                  "/help_story_made\n"
                                                  "/help_person_made")
