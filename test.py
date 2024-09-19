@@ -16,3 +16,7 @@ from aiogram import types
 from settings import ADMINS
 
 
+def s (a,b,c):
+    print(a,b,c)
+
+s(a=1,b=2,c=3)

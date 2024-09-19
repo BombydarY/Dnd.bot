@@ -23,3 +23,14 @@ def error_check(func):
 
 
     return candy_wrapper
+
+
+def neur_bum(func):
+    async def candy_wrapper(**kwargs):
+        try:
+            await func(message)
+        except Exception as err:
+            await message.answer(f"бросай спасброски от смерти у вас ошибка!{err}")
+
+
+    return candy_wrapper

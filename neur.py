@@ -17,7 +17,7 @@ def get_answer_gpt(quastion: str,promt: str) -> str:
     )
 
     return response.choices[0].message.content
-
+get_answer_gpt("s","s")
 
 def picture_detect(pic_way: str, promt:"prom"):
     def encode_image(image_path):
