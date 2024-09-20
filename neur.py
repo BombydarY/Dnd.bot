@@ -1,13 +1,15 @@
+import asyncio
 import base64
 import requests
 import telebot
 from openai import OpenAI
 import handlers.client
+from decorators import neur_bum
 from settings import GPT_TOKEN
 
 client = OpenAI(api_key=GPT_TOKEN)
-
-def get_answer_gpt(quastion: str,promt: str) -> str:
+@neur_bum
+async def get_answer_gpt(quastion: str,promt: str) -> str:
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -17,9 +19,9 @@ def get_answer_gpt(quastion: str,promt: str) -> str:
     )
 
     return response.choices[0].message.content
-get_answer_gpt("s","s")
 
-def picture_detect(pic_way: str, promt:"prom"):
+@neur_bum
+async def picture_detect(pic_way: str, promt:str):
     def encode_image(image_path):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
@@ -60,7 +62,7 @@ def picture_detect(pic_way: str, promt:"prom"):
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
     return response.json()["choices"][0]["message"]["content"]
-
+asyncio.run( get_answer_gpt(pic_way="s",promt="s"))
 
 def pic(link: str, text: str):
     response = client.chat.completions.create(
