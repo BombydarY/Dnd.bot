@@ -8,8 +8,10 @@ from decorators import neur_bum
 from settings import GPT_TOKEN
 
 client = OpenAI(api_key=GPT_TOKEN)
+
+
 @neur_bum
-async def get_answer_gpt(quastion: str,promt: str) -> str:
+async def get_answer_gpt(quastion: str, promt: str) -> str:
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -21,7 +23,19 @@ async def get_answer_gpt(quastion: str,promt: str) -> str:
     return response.choices[0].message.content
 
 @neur_bum
-async def picture_detect(pic_way: str, promt:str):
+async def pic_make(promt: str):
+    response = client.images.generate(
+      model="dall-e-3",
+      prompt=promt,
+      size="1024x1024",
+      quality="standard",
+      n=1,
+    )
+
+    return response.data[0].url
+
+@neur_bum
+async def picture_detect(pic_way: str, promt: str):
     def encode_image(image_path):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
@@ -62,8 +76,9 @@ async def picture_detect(pic_way: str, promt:str):
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
     return response.json()["choices"][0]["message"]["content"]
-asyncio.run( get_answer_gpt(pic_way="s",promt="s"))
 
+
+@neur_bum
 def pic(link: str, text: str):
     response = client.chat.completions.create(
         model="gpt-4o",

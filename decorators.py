@@ -21,7 +21,6 @@ def error_check(func):
         except Exception as err:
             await message.answer(f"бросай спасброски от смерти у вас ошибка!{err}")
 
-
     return candy_wrapper
 
 
@@ -31,6 +30,5 @@ def neur_bum(func):
             return await func(**kwargs)
         except Exception as err:
             print(f"Ошибка в нейронной сети: {err}")
-
 
     return candy_wrapper
