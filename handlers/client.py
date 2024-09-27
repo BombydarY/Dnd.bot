@@ -1,3 +1,5 @@
+import json
+
 from create_bot import dp, bot
 from aiogram import types, Dispatcher
 
@@ -5,6 +7,7 @@ from decorators import admin_check, error_check
 from neur import get_answer_gpt, pic_make
 
 USER_HELP_MADE = {}
+ALL_USERS = []
 
 
 @error_check
@@ -12,6 +15,9 @@ async def send_welcome(message: types.Message):
     await bot.send_message(message.from_user.id, "Hello\n"
                                                  "/help_story_made\n"
                                                  "/help_person_made")
+    with open('Peoples.json', 'w') as f:
+        json.dump({message.from_user.id: message.from_user.username}, f)
+
 
 @error_check
 async def help_story_made(message: types.Message):
@@ -20,6 +26,7 @@ async def help_story_made(message: types.Message):
     USER_HELP_MADE[message.from_user.id] = {"message_user": "", "state": 1}
     print(USER_HELP_MADE)
 
+
 @error_check
 async def help_person_made(message: types.Message):
     await bot.send_message(message.from_user.id, "Мне нужно описание персонажа которого ты хочешь придумать")
@@ -27,28 +34,10 @@ async def help_person_made(message: types.Message):
     USER_HELP_MADE[message.from_user.id] = {"message_user": "", "state": 2}
     print(USER_HELP_MADE)
 
-@error_check
-async def yes(message: types.Message):
-    print (1111)
-    """
-    представим, что впн включен.
-    
-    когда ты будешь просить нейронку нарисовать что-то, она будет неправильно тебя понимать и нарисует не то, что ты хочешь.
-    да, ты правильно догадываешься, Гриша, это в мессаге.текст проблема. 
-    
-    просто для проверки: отпринтуй мессаге.текст в этой функции ;)
-    
-    """
-    picture = await pic_make(promt = message.text)
-    await bot.send_photo(message.from_user.id, photo=picture)
-
-
-
 
 @error_check
 async def no(message: types.Message):
     await bot.send_message(message.from_user.id, "Ты бяка")
-
 
 
 @error_check
@@ -65,12 +54,22 @@ async def text_handler(message: types.Message):
             del USER_HELP_MADE[message.from_user.id]
         if state == 2:
             USER_HELP_MADE[message.from_user.id]["message_user"] = message.text
-            # answer = await get_answer_gpt(
-            #     promt="Ты разбираешься в настольных играх (игра DND), очень круто скреативь и придумай персонажа на следующую тему",
-            #     quastion=message.text)
-            # await bot.send_message(message.from_user.id, answer)
+            answer = await get_answer_gpt(
+                promt="Ты разбираешься в настольных играх (игра DND), очень круто скреативь и придумай персонажа на следующую тему",
+                quastion=message.text)
+            await bot.send_message(message.from_user.id, answer)
             await bot.send_message(message.from_user.id, "You want see your person?/yes /no")
-            del USER_HELP_MADE[message.from_user.id]
+
+
+@error_check
+async def yes(message: types.Message):
+    state = USER_HELP_MADE[message.from_user.id]["state"]
+    if message.from_user.id in USER_HELP_MADE and state == 2:
+        picture = await pic_make(promt=USER_HELP_MADE[message.from_user.id]["message_user"])
+        await bot.send_photo(message.from_user.id, photo=picture)
+        del USER_HELP_MADE[message.from_user.id]
+    else:
+        await bot.send_message(message.from_user.id, "Вы не начали придумывать персонажа /help_person_made")
 
 
 def register_handlers_client(dp: Dispatcher):
@@ -80,4 +79,3 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(yes, commands=["yes"])
     dp.register_message_handler(no, commands=["no"])
     dp.register_message_handler(text_handler, content_types=["text"])
-

@@ -11,12 +11,13 @@
 #     print("Hello!")
 #
 # say_hello()
-from aiogram import types
+# from aiogram import types pep8
 
-from settings import ADMINS
+# def s (a,b,*args):
+#     print(args)
+# s(1,2,3,4,5,6)
+def a(age , **kwargs):
+    print(kwargs)
 
 
-def s (a,b,c):
-    print(a,b,c)
-
-s(a=1,b=2,c=3)
+a(name="Pasha", friend="Grisha")
