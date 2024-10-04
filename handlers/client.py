@@ -15,8 +15,18 @@ async def send_welcome(message: types.Message):
     await bot.send_message(message.from_user.id, "Hello\n"
                                                  "/help_story_made\n"
                                                  "/help_person_made")
-    with open('Peoples.json', 'w') as f:
-        json.dump({message.from_user.id: message.from_user.username}, f)
+    with open('Peoples.json','r') as f:
+        users:list = json.load(f)
+        ids = [list(f.keys())[0] for f in users]
+        if str(message.from_user.id) not in ids:
+            users.append({message.from_user.id:message.from_user.username})
+        else:
+            return
+
+
+    with open('Peoples.json','w') as f:
+        json.dump(users, f)
+
 
 
 @error_check
